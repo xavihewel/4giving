@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.enterprise.context.Dependent;
 import javax.sql.DataSource;
+import net.forgiving.common.user.Address;
 import net.forgiving.common.user.User;
 import net.forgiving.user.UsersManager;
 
@@ -72,6 +73,12 @@ public class JDBCUserDao implements UserDao{
         result.setAccountVerified(rs.getBoolean("validated"));
         result.setCreated(rs.getTimestamp("created").toInstant());
         result.setEmail(rs.getString("email"));
+        
+        long addressId = rs.getLong("address_id");
+        Address address=new Address();
+        address.setId(addressId);
+        result.setAddress(address);
+        
         result.setUsername(rs.getString("username"));
         result.setPassword(rs.getString("password"));
         result.setKarma(rs.getInt("karma"));

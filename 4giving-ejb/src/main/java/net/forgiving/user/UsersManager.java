@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import net.forgiving.common.user.User;
+import net.forgiving.user.persistence.AddressDao;
 import net.forgiving.user.persistence.UserDao;
 
 /**
@@ -21,10 +22,16 @@ public class UsersManager {
     @Inject
     private UserDao userDao;
     
+    @Inject
+    private AddressDao addressDao;
+    
     
     public User getUser(long id){
         User result = userDao.getUser(id);
-        
+        System.out.println("Setting address");
+        result.setAddress(
+                addressDao.getAddress(
+                        result.getAddress().getId()));
         return result;
     }
     
