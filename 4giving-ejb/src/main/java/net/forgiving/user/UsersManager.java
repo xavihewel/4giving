@@ -6,6 +6,7 @@
 package net.forgiving.user;
 
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import net.forgiving.common.user.User;
@@ -25,6 +26,10 @@ public class UsersManager {
     @Inject
     private AddressDao addressDao;
     
+    @PostConstruct
+    public void init(){
+        System.out.println("Initializing User manager");
+    }
     
     public User getUser(long id){
         User result = userDao.getUser(id);

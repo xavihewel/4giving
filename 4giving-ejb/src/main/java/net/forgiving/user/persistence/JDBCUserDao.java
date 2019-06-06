@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,6 +30,11 @@ import net.forgiving.user.UsersManager;
 @Dependent
 public class JDBCUserDao implements UserDao{
     
+    public final static String SELECT_ALL="SELECT * FROM USERS";
+    public final static String SELECT_ID="SELECT * FROM USERS WHERE id = ?";
+    public final static String INSERT="INSERT INTO USERS (username,password,"
+            + "email,address_id,validated,created,karma) VALUES (?,?,?,?,?,?,?)";
+    
     @Resource(name  = "jdbc/forgivingDS")
     private DataSource dataSource;
 
@@ -36,7 +43,7 @@ public class JDBCUserDao implements UserDao{
         List<User> result=new ArrayList<>();
         try(Connection connection=dataSource.getConnection();
                 Statement st=connection.createStatement();
-                ResultSet rs= st.executeQuery("SELECT * FROM USERS")){
+                ResultSet rs= st.executeQuery(SELECT_ALL)){
             
             while(rs.next()){
                 result.add(getUserFromResultSet(rs));
@@ -53,7 +60,7 @@ public class JDBCUserDao implements UserDao{
             Connection connection = dataSource.getConnection();
             PreparedStatement ps = 
                 connection.prepareStatement(
-                        "SELECT * FROM USERS WHERE ID = ?")){
+                        SELECT_ID)){
             
             ps.setLong(1, id);
             
@@ -88,7 +95,31 @@ public class JDBCUserDao implements UserDao{
 
     @Override
     public void storeUser(User us) {
-        
+        try(Connection con=dataSource.getConnection();
+                PreparedStatement ps =con.prepareStatement(INSERT, 
+                        Statement.RETURN_GENERATED_KEYS)){
+            ps.setString(1,us.getUsername());
+            ps.setString(2,us.getPassword());
+            ps.setString(3,us.getEmail());
+            ps.setLong(4,us.getAddress().getId());
+            ps.setBoolean(5, us.isAccountVerified());
+            ps.setTimestamp(6, Timestamp.from(us.getCreated()));
+            ps.setInt(7, us.getKarma());
+            
+            ps.executeUpdate();
+            
+            ResultSet rs = ps.getGeneratedKeys();
+            
+            if(rs.next()){
+                us.setId(rs.getLong(1));
+            }else{
+                //TODO llençar error
+                System.out.println("No ha retornat l'id insertat");
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCUserDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

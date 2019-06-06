@@ -13,7 +13,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.forgiving.TestBean;
+import net.forgiving.test.StatefulTestBean;
+import net.forgiving.test.TestBean;
 
 /**
  *
@@ -23,13 +24,21 @@ import net.forgiving.TestBean;
 public class TestServlet extends HttpServlet {
     
     @EJB
-    private TestBean testBean;
+    private StatefulTestBean testBean;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter pw
                 = resp.getWriter();
         pw.write("test: "+testBean.getTest());
+        
+        testBean.setTest(req.getParameter("test"));
+        
+        if(req.getParameter("fi")!=null){
+            testBean.finish();
+            //aqui el EJB ja no es pot fer servir.
+        }
+        
     }
     
 }

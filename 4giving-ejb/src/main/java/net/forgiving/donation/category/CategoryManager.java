@@ -30,7 +30,7 @@ import net.forgiving.donation.category.persistence.CategoryDao;
  */
 @Singleton
 @Startup
-//@DependsOn({"un altre singleton"," el segon"})
+@DependsOn({"userStartup"})
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class CategoryManager {
     
