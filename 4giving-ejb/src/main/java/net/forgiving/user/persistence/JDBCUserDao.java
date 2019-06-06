@@ -88,7 +88,7 @@ public class JDBCUserDao implements UserDao{
 
     @Override
     public void storeUser(User us) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     
 }

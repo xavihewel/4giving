@@ -8,9 +8,11 @@ package net.forgiving.donation.category;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.AccessTimeout;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.DependsOn;
@@ -27,9 +29,9 @@ import net.forgiving.donation.category.persistence.CategoryDao;
  * @author gabalca
  */
 @Singleton
-//@Startup
+@Startup
 //@DependsOn({"un altre singleton"," el segon"})
-//@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class CategoryManager {
     
     private Set<Category> categories;
@@ -41,6 +43,8 @@ public class CategoryManager {
     public void init(){
         System.out.println("Inicialitzant categories");
         categories=new HashSet<>(categoryDao.getAllCategories());
+        //throw new RuntimeException("Error inicialitzant categories");
+        
     }
     
     @Lock(LockType.READ)
@@ -53,13 +57,17 @@ public class CategoryManager {
     }
     
     @Lock(LockType.READ)
+    @AccessTimeout(value=5,unit = TimeUnit.SECONDS)
+    //salta en el metode que s'espera, no en el que s'executa
     public Set allCategories(){
         return categories;
     }
     
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=2,unit = TimeUnit.SECONDS)
     public void addCategory(Category cat){
         categoryDao.storeCategory(cat);
+        System.out.println("Guardada la categoria");
         try {
             Thread.sleep(10000);
         } catch (InterruptedException ex) {
