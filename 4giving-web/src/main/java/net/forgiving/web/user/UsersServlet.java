@@ -8,12 +8,15 @@ package net.forgiving.web.user;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.forgiving.user.UsersManager;
+import net.forgiving.user.UserLocal;
 
 /**
  *
@@ -22,8 +25,34 @@ import net.forgiving.user.UsersManager;
 @WebServlet(name = "UsersServlet", urlPatterns = {"/users"})
 public class UsersServlet extends HttpServlet {
 
-    @EJB
-    private UsersManager usersManager;
+    //@EJB
+    private UserLocal usersManager;
+
+    @Override
+    public void init() throws ServletException {
+        super.init(); 
+        
+        try{
+            InitialContext ic=new InitialContext();
+            usersManager = (UserLocal)ic.lookup("java:app/"
+                    + "net.forgiving-4giving-ejb-1.0-SNAPSHOT/"
+                    + "UsersManager!net.forgiving.user.UserLocal");
+            /*
+            usersManager = (UserLocal)ic.lookup("java:global/4giving-ear/"
+                    + "net.forgiving-4giving-ejb-1.0-SNAPSHOT/"
+                    + "UsersManager!net.forgiving.user.UserLocal");
+            */
+            System.out.println("Obtingut UserLocal");
+        }catch(NamingException ex){
+            System.out.println("ERROR obtenint UserLocal");
+            ex.printStackTrace();
+            throw new UnavailableException("No es pot incialitzar, em falta el bean ");
+        }
+        
+    }
+    
+    
+    
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

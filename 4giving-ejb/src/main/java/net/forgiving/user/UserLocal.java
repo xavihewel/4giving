@@ -7,6 +7,10 @@ package net.forgiving.user;
 
 import java.util.List;
 import javax.ejb.Local;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import net.forgiving.common.user.User;
 
 /**
@@ -14,7 +18,15 @@ import net.forgiving.common.user.User;
  * @author gabalca
  */
 @Local
+@Path("/users")
 public interface UserLocal {
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public List<User> getAllUsers();
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{userId}")
     public User getUser(long id);
 }

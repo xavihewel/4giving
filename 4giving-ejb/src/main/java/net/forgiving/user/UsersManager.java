@@ -18,7 +18,8 @@ import net.forgiving.user.persistence.UserDao;
  * @author gabalca
  */
 @Stateless
-public class UsersManager {
+public class UsersManager 
+        implements UserRemote, UserLocal{
     
     @Inject
     private UserDao userDao;
