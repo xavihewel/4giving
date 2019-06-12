@@ -28,7 +28,11 @@ import net.forgiving.user.UserLocal;
 @WebServlet(name = "test", urlPatterns ="/test")
 public class TestServlet extends HttpServlet {
     
-    @EJB(lookup = "java:app",name = "testBean") //"java:comp/testBean"
+    @EJB/*(lookup = "java:app",
+            name = "testBean",      //"java:comp/testBean"
+            beanInterface = UserLocal.class,
+            beanName = "nom del Session bean") 
+    */
     private StatefulTestBean testBean;
     
     private ShoppingCartBean cart;

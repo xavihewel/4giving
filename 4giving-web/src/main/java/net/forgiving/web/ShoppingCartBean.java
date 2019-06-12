@@ -16,7 +16,7 @@ import net.forgiving.common.donation.Item;
  *
  * @author gabalca
  */
-@Stateful
+@Stateful(name = "shopCart")
 public class ShoppingCartBean {
     
     List<Item> items;

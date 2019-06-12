@@ -33,7 +33,7 @@ public class JDBCUserDao implements UserDao{
     public final static String SELECT_ALL="SELECT * FROM USERS";
     public final static String SELECT_ID="SELECT * FROM USERS WHERE id = ?";
     public final static String INSERT="INSERT INTO USERS (username,password,"
-            + "email,address_id,validated,created,karma) VALUES (?,?,?,?,?,?,?)";
+            + "email,address_id,validated,created,karmaa) VALUES (?,?,?,?,?,?,?)";
     
     @Resource(name  = "jdbc/forgivingDS")
     private DataSource dataSource;

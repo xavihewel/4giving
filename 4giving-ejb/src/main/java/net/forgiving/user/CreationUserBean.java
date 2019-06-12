@@ -6,11 +6,19 @@
 package net.forgiving.user;
 
 import java.time.Instant;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 import net.forgiving.common.user.Address;
 import net.forgiving.common.user.User;
+import net.forgiving.mail.MailManager;
 import net.forgiving.user.persistence.AddressDao;
 import net.forgiving.user.persistence.UserDao;
 
@@ -20,6 +28,10 @@ import net.forgiving.user.persistence.UserDao;
  */
 @Stateful
 public class CreationUserBean {
+    
+    @EJB
+    private MailManager mailManager;
+    
     private User user;
     private Address address;
     
@@ -39,13 +51,33 @@ public class CreationUserBean {
     
     @Remove
     public void createUser(){
-        user.setCreated(Instant.now());
-        user.setAccountVerified(false);
-        user.setKarma(100);
         
-        addressDao.storeAddress(address);
-        user.setAddress(address);
-        userDao.storeUser(user);
+        Future<Boolean> futureMail=mailManager.sendMail(user, 
+                "Benvingut al nostre servei!", "Benvingut a 4giving");
+        try{
+            user.setCreated(Instant.now());
+            user.setAccountVerified(false);
+            user.setKarma(100);
+
+            addressDao.storeAddress(address);
+            user.setAddress(address);
+            userDao.storeUser(user);
+            System.out.println("He acabat de fer el missatge, espero el mail");
+            try {
+                Boolean result=futureMail.get(5,TimeUnit.SECONDS);
+                System.out.println("El mail ha anat be? "+result);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(CreationUserBean.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+                Logger.getLogger(CreationUserBean.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TimeoutException ex) {
+                Logger.getLogger(CreationUserBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }catch(Exception e){
+            if(!futureMail.isDone()){
+                futureMail.cancel(true);
+            }
+        }
     }
     
     @Remove
