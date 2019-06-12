@@ -5,12 +5,14 @@
  */
 package net.forgiving.web.user;
 
+import java.io.IOException;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import net.forgiving.common.user.Address;
@@ -45,22 +47,24 @@ public class NewUserWizardBean implements Serializable{
         }
     }
     
-    public void cancel(){
+    public void cancel() throws IOException{
         createManager.cancelCreation();
         conversation.end();
         finishedNormally=true;
-        //TODO redirigir a una plana?
+        FacesContext.getCurrentInstance().getExternalContext().redirect("users");
     }
     
-    public void saveUser(){
+    public void saveUser() throws IOException{
         createManager.createUser();
         conversation.end();
         finishedNormally=true;
+        FacesContext.getCurrentInstance().getExternalContext().redirect("users");
     }
     
     @PostConstruct
     public void init(){
         finishedNormally=false;
+        address = new Address();
     }
     
     @PreDestroy
@@ -78,11 +82,14 @@ public class NewUserWizardBean implements Serializable{
         
         createManager.setUser(us);
         
+        
+        
         return "user2?faces-redirect=true";
                
     }
     
     public String processStep2(){
+        System.out.println("address es "+address);
         createManager.setAddress(address);
         //redirigir al seguent step
         return "user3?faces-redirect=true";

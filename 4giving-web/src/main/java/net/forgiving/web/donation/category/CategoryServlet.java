@@ -5,7 +5,6 @@
  */
 package net.forgiving.web.donation.category;
 
-import net.forgiving.web.user.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
@@ -15,8 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.forgiving.common.donation.Category;
-import net.forgiving.donation.category.CategoryManager;
-import net.forgiving.user.UsersManager;
+import net.forgiving.donation.category.CategoryLocal;
+import net.forgiving.donation.category.CategoryRemote;
 
 /**
  *
@@ -26,7 +25,7 @@ import net.forgiving.user.UsersManager;
 public class CategoryServlet extends HttpServlet {
 
     @EJB
-    private CategoryManager catManager;
+    private CategoryRemote catManager;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -53,8 +52,8 @@ public class CategoryServlet extends HttpServlet {
                 String name=request.getParameter("new");
                 Category cat = new Category();
                 cat.setName(name);
-                catManager.addCategory(cat);
-                out.println("Creada nova categoria");
+                cat = catManager.addCategory(cat); 
+                out.println("Creada nova categoria "+cat);
             }else{
                 out.println("Totes les categories: <br/>");
                 catManager.allCategories()

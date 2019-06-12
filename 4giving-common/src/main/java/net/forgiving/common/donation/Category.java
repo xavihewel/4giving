@@ -9,6 +9,7 @@ package net.forgiving.common.donation;
  *
  * @author gabalca
  */
+
 public class Category {
     private Long id;
     private String name;

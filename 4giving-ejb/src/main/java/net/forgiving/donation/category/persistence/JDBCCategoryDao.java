@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.sql.DataSource;
@@ -25,7 +26,7 @@ import net.forgiving.user.persistence.JDBCUserDao;
  *
  * @author gabalca
  */
-@RequestScoped
+@Dependent
 public class JDBCCategoryDao implements CategoryDao{
     
     @Resource(name  = "jdbc/forgivingDS")

@@ -5,15 +5,20 @@
  */
 package net.forgiving.test;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.context.Dependent;
+import net.forgiving.donation.category.CategoryLocal;
 
 /**
  *
  * @author gabalca
  */
 @Stateless
+@Dependent
 public class TestBean {
+    
     public String getTest(){
-        return "Testing!";
+        return "Testing! ";
     }
 }
