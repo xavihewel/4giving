@@ -5,6 +5,8 @@
  */
 package net.forgiving.donation;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -29,11 +31,19 @@ public class ItemBean {
     @Inject
     private ItemDao itemDao;
     
+    @Resource
+    private SessionContext sessionContext;
+    
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void createItem(Item i) throws ItemStorageException{
         System.out.println("Storing item");
-        itemDao.storeItem(i);
+        try{
+            itemDao.storeItem(i);
+        }catch(ItemStorageException ex){
+            sessionContext.setRollbackOnly();
+            //throw ex;
+        }
     }
     
     @GET

@@ -11,9 +11,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 import net.forgiving.common.donation.Category;
 import net.forgiving.donation.category.persistence.CategoryDao;
 
@@ -23,12 +28,16 @@ import net.forgiving.donation.category.persistence.CategoryDao;
  */
 @Stateless
 @Remote(CategoryRemote.class)
+@TransactionManagement(TransactionManagementType.BEAN)
 public class CategoryManager  implements CategoryLocal, CategoryRemote{
     
     private Set<Category> categories;
     
     @Inject
     private CategoryDao categoryDao;
+    
+    @Resource
+    private UserTransaction userTx;
     
     @PostConstruct
     public void init(){
@@ -54,13 +63,20 @@ public class CategoryManager  implements CategoryLocal, CategoryRemote{
     }
 
     public Category addCategory(Category cat){
-        
-        categoryDao.storeCategory(cat);
-        System.out.println("Guardada la categoria");
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(CategoryManager.class.getName()).log(Level.SEVERE, null, ex);
+
+        try{
+            userTx.setTransactionTimeout(10);
+            userTx.begin();
+            categoryDao.storeCategory(cat);
+            System.out.println("Guardada la categoria");
+            userTx.commit();
+        }catch(Exception e){
+            System.out.println("Error guardant la categoria");
+            try {
+                userTx.rollback();
+            } catch (IllegalStateException | SecurityException | SystemException ex) {
+                Logger.getLogger(CategoryManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         categories=new HashSet<>(categoryDao.getAllCategories());
         return cat;

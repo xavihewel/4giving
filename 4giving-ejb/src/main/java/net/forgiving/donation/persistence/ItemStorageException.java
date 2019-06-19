@@ -5,10 +5,13 @@
  */
 package net.forgiving.donation.persistence;
 
+import javax.ejb.ApplicationException;
+
 /**
  *
  * @author gabalca
  */
+//@ApplicationException(rollback = true)
 public class ItemStorageException extends Exception{
     
     boolean wasNew;

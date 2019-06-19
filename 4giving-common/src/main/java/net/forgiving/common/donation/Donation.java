@@ -21,6 +21,23 @@ public class Donation {
     private Conditions conditions;
     private int karmaCost;
     private Instant created;
+    private Instant resolvingDeadline;
+
+    public Instant getResolvingDeadline() {
+        return resolvingDeadline;
+    }
+
+    public void setResolvingDeadline(Instant resolvingDeadline) {
+        this.resolvingDeadline = resolvingDeadline;
+    }
+
+    public DonationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DonationStatus status) {
+        this.status = status;
+    }
     private DonationStatus status;
     
 
