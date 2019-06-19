@@ -28,10 +28,10 @@ import net.forgiving.common.donation.Item;
 public class JDBCItemDao implements ItemDao{
     
     public static final String SELECT_ID="SELECT * FROM ITEM WHERE ID = ?";
-    public static final String SELECT_CATEG="SELECT * FROM ITEM_CATEG WHERE ITEM_ID = ?";
+    public static final String SELECT_CATEG="SELECT * FROM ITEM_CATEGORY WHERE ITEM_ID = ?";
     public static final String INSERT="INSERT INTO ITEM (description,picUrl)"
             + " VALUES (?,?)";
-    public static final String INSERT_CATEG="INSERT INTO ITEM_CATEG "
+    public static final String INSERT_CATEG="INSERT INTO ITEM_CATEGORY "
             + "(item_id,categ_id)"
             + " VALUES (?,?)";
     
