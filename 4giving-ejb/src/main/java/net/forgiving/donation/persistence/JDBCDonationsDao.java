@@ -33,7 +33,7 @@ public class JDBCDonationsDao implements DonationsDao{
             + "item_id,created,karma,status,resolving_time)"
             + " VALUES (?,?,?,?,?,?)";
     
-    @Resource(name  = "jdbc/forgivingDSAlternate")
+    @Resource(name  = "jdbc/forgivingDS")
     private DataSource dataSource;
 
     @Override

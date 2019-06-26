@@ -6,12 +6,15 @@
 package net.forgiving.donation;
 
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,7 +31,8 @@ import net.forgiving.donation.persistence.ItemStorageException;
  */
 @Stateless
 @Path("/items")
-public class ItemBean {
+@DeclareRoles("Admin")
+public class ItemBean{
     
     @Inject
     private ItemDao itemDao;
@@ -55,6 +59,14 @@ public class ItemBean {
     public Item getItemById(@PathParam("itemId") long id) throws ItemStorageException{
         System.out.println("Getting item "+id);
         return itemDao.getItemById(id);
+    }
+    
+    @DELETE
+    @Path("/{itemId}")
+    @RolesAllowed("Admin")
+    public void deleteItem(@PathParam("itemId") long id) throws ItemStorageException{
+        System.out.println("Aqui eliminariem l'Item "+id);
+        //TODO implementar al DAO
     }
     
 }

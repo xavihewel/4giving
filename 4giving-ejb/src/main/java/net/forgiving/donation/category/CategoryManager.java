@@ -12,8 +12,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import javax.ejb.Schedule;
+import javax.ejb.Schedules;
+import javax.ejb.Singleton;
+import javax.ejb.Timer;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
@@ -26,9 +34,11 @@ import net.forgiving.donation.category.persistence.CategoryDao;
  *
  * @author gabalca
  */
-@Stateless
+@Singleton
 @Remote(CategoryRemote.class)
 @TransactionManagement(TransactionManagementType.BEAN)
+@DeclareRoles({"User","Admin"})
+@RolesAllowed({"User","Admin"})
 public class CategoryManager  implements CategoryLocal, CategoryRemote{
     
     private Set<Category> categories;
@@ -42,14 +52,27 @@ public class CategoryManager  implements CategoryLocal, CategoryRemote{
     @PostConstruct
     public void init(){
         System.out.println("Inicialitzant categories");
+        refreshCategories(null);
+        //throw new RuntimeException("Error inicialitzant categories");
+    }
+    
+    @Schedules({
+        @Schedule(second = "10/20", minute="*", hour="*", dayOfWeek = "Wed")
+    })
+    @Lock(LockType.WRITE)
+    public void refreshCategories(Timer t){
+        if(t!=null){
+            System.out.println(t.getInfo());
+        }
+        System.out.println("Refrescant categories");
         categories=new HashSet<>(
                 categoryDao.getAllCategories()
                 //Arrays.asList(new Category(1L, "prova 1"),new Category(2L, "prova 2"))
         );
-        //throw new RuntimeException("Error inicialitzant categories");
-        
     }
     
+    @PermitAll
+    @Lock(LockType.READ)
     public Category getCategory(Long id){
         Optional<Category> result= 
                 categories.stream()
@@ -58,10 +81,14 @@ public class CategoryManager  implements CategoryLocal, CategoryRemote{
         return result.orElse(null);                
     }
     //salta en el metode que s'espera, no en el que s'executa
+    @PermitAll
+    @Lock(LockType.READ)
     public Set allCategories(){
         return categories;
     }
 
+    @RolesAllowed("Admin")
+    @Lock(LockType.WRITE)
     public Category addCategory(Category cat){
 
         try{

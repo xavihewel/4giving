@@ -7,8 +7,11 @@ package net.forgiving.web.donation.category;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.annotation.security.DeclareRoles;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +25,8 @@ import net.forgiving.donation.category.CategoryRemote;
  * @author gabalca
  */
 @WebServlet(name = "CategoryServlet", urlPatterns = {"/categories"})
+@DeclareRoles("User")
+@ServletSecurity(@HttpConstraint(rolesAllowed = "User"))
 public class CategoryServlet extends HttpServlet {
 
     @EJB

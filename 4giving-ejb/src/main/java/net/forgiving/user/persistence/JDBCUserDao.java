@@ -32,6 +32,7 @@ public class JDBCUserDao implements UserDao{
     
     public final static String SELECT_ALL="SELECT * FROM USERS";
     public final static String SELECT_ID="SELECT * FROM USERS WHERE id = ?";
+    public final static String SELECT_USERNAME="SELECT * FROM USERS WHERE username = ?";
     public final static String INSERT="INSERT INTO USERS (username,password,"
             + "email,address_id,validated,created,karmaa) VALUES (?,?,?,?,?,?,?)";
     
@@ -63,6 +64,26 @@ public class JDBCUserDao implements UserDao{
                         SELECT_ID)){
             
             ps.setLong(1, id);
+            
+            ResultSet rs=ps.executeQuery();
+            if(rs.next()){
+                return getUserFromResultSet(rs);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    @Override
+    public User getUser(String username) {
+        try(
+            Connection connection = dataSource.getConnection();
+            PreparedStatement ps = 
+                connection.prepareStatement(
+                        SELECT_USERNAME)){
+            
+            ps.setString(1, username);
             
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
@@ -121,5 +142,6 @@ public class JDBCUserDao implements UserDao{
             Logger.getLogger(JDBCUserDao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     
 }
