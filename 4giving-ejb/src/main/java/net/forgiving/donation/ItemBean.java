@@ -8,6 +8,8 @@ package net.forgiving.donation;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,6 +38,7 @@ public class ItemBean {
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public void createItem(Item i) throws ItemStorageException{
         System.out.println("Storing item");
         try{

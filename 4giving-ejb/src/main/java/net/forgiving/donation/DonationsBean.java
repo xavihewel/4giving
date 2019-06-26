@@ -11,6 +11,8 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -50,6 +52,7 @@ public class DonationsBean {
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void saveDonation(Donation d) throws DonationStorageException{
         d.setCreated(Instant.now());
         d.setStatus(DonationStatus.OPENED);
