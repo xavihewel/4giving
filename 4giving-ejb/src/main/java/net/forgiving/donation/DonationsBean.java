@@ -54,6 +54,9 @@ public class DonationsBean{
     @EJB
     private DonationLogBean donationLogBean;
     
+    @EJB
+    private DonationsResolverBean donationsResolver;
+    
     @Resource
     private SessionContext sessionCtx;
     
@@ -78,7 +81,7 @@ public class DonationsBean{
         d.setStatus(DonationStatus.OPENED);
         d.setKarmaCost(2);
         if(d.getResolvingDeadline()==null){
-            d.setResolvingDeadline(Instant.now().plus(7,ChronoUnit.DAYS));
+            d.setResolvingDeadline(Instant.now().plus(7,ChronoUnit.SECONDS));
         }
         
         if(d.getItem()!=null){
@@ -87,6 +90,8 @@ public class DonationsBean{
                 if(!sessionCtx.getRollbackOnly()){
                     donationsDao.storeDonation(d);
                     donationLogBean.donationAdded(d);
+                    
+                    donationsResolver.setupResolution(d);
                     
                 }
             }catch(ItemStorageException ex){
