@@ -50,6 +50,7 @@ public class ShippingBean {
         }
 
         JMSProducer producer = jmsContext.createProducer();
+        producer.setPriority(d.getId().intValue() % 10);
         producer.send(dest, om);
 
     }
