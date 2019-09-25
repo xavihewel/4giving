@@ -31,6 +31,22 @@ import javax.jms.MessageListener;
     @ActivationConfigProperty(
             propertyName = "messageSelector",
             propertyValue = "hores >= 2"
+    ),
+    @ActivationConfigProperty(
+            propertyName = "acknowledgeMode",
+            propertyValue = "Dups-ok-acknowledge"
+    ),
+    @ActivationConfigProperty(
+            propertyName = "subscriptionDurability",
+            propertyValue = "Durable" //NonDurable
+    ),
+    @ActivationConfigProperty(
+            propertyName = "subscriptionName",
+            propertyValue = "notifyUsersSubscription"
+    ),
+    @ActivationConfigProperty(
+            propertyName = "clientId",
+            propertyValue = "notifyUsersClient"
     )
 })
 public class NotifyUsersOnShutdownMDB implements MessageListener {
